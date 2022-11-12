@@ -31,9 +31,57 @@ char *ft_strjoin(char *s1, char *buff)
 		while (buff[j] != 0)
 			sr1[i++] = buff[j++];
 		sr1[i] = 0;
-		free(buff);
-		free(s1);
 		return (sr1);
 	}
 	return (0);
+}
+
+char *ft_strdup(const char *src)
+{
+	char *dp;
+	int i;
+
+	i = 0;
+	while (src[i])
+		i++;
+	dp = (char *)malloc(i * sizeof(char) + 1);
+	if (!dp)
+		return (NULL);
+	i = 0;
+	while (src[i])
+	{
+		dp[i] = src[i];
+		i++;
+	}
+	dp[i] = '\0';
+	return (dp);
+}
+
+char *ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char *temp;
+	size_t j;
+
+	if (!s)
+		return (NULL);
+	if (start > ft_strlen(s))
+	{
+		temp = (char *)malloc(sizeof(char) * 1);
+		temp[0] = 0;
+		return (temp);
+	}
+	if (len < ft_strlen(s))
+		temp = (char *)malloc(len + 1);
+	else
+	{
+		temp = (char *)malloc((ft_strlen(s) - (size_t)start));
+		len = ft_strlen(s);
+	}
+	if (temp == NULL)
+		return (NULL);
+	j = 0;
+	while (j < len)
+		temp[j++] = s[start++];
+	temp[j] = 0;
+	return (temp);
 }

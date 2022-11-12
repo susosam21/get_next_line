@@ -6,7 +6,7 @@
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 12:29:41 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/07 17:46:27 by hmohamed         ###   ########.fr       */
+/*   Updated: 2022/11/12 17:32:34 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,75 +22,75 @@ static int check(char *buff)
 	while (buff[i] != '\0')
 	{
 		if (buff[i] == '\n')
-			return (0);
+			return (1);
 		i++;
 	}
-	return (1);
+	return (0);
 }
 
-char *join(char *str, char *buff)
+static void freeline(char **str)
 {
-	char *res;
-	int i;
-	int j;
-
-	i = 0;
-	j = 0;
-	while (buff[i] != '\n')
-		i++;
-	res = malloc(i);
-
-	while (j <= i)
+	if (str != NULL && *str != NULL)
 	{
-		res[j] = *buff++;
-		j++;
+		free(*str);
+		*str = NULL;
 	}
-	res = ft_strjoin(str, res);
-	return (res);
+}
+
+static char *next(char **str, int i)
+{
+	int j;
+	char *temp;
+	char *line;
+
+	if (i <= 0 && *str == NULL)
+		return (NULL);
+	else
+		j = 0;
+	//	printf("%s", *str);
+	while ((*str)[j] != '\n' && (*str)[j] != '\0')
+		j++;
+	if ((*str)[j] == '\n')
+	{
+		line = ft_substr(*str, 0, j + 1);
+		temp = ft_strdup(&((*str)[j + 1]));
+		free(*str);
+		*str = temp;
+		if ((*str)[0] == '\0')
+			freeline(str);
+	}
+	else
+	{
+		line = ft_strdup(*str);
+		freeline(str);
+	}
+	return (line);
 }
 
 char *get_next_line(int fd)
 {
-	char *str;
-	unsigned int buff_size;
-	static char *buff;
-	size_t i;
-	int j;
-	char *start;
+	char *temp;
+	static char *str;
+	int i;
+	char buff[BUFF_SIZE + 1];
 
-	j = 0;
-	buff_size = 4;
-	str = NULL;
-	i = 0;
-	if (buff)
+	if (fd < 0)
+		return (NULL);
+	while ((i = read(fd, buff, BUFF_SIZE)) > 0)
 	{
-		while (buff[j] != '\n')
-			j++;
-		j++;
-		free(str);
-		str = malloc(ft_strlen(buff) - j);
-		while (buff[j])
+		buff[i] = '\0';
+		if (str == NULL)
+			str = ft_strdup(buff);
+		else
 		{
-			str[i++] = buff[j++];
+			temp = ft_strjoin(str, buff);
+			free(str);
+			str = temp;
 		}
-
-		printf("this is: %s \n", buff);
+		if (check(str))
+			break;
 	}
-	else
-		str = malloc(buff_size);
-
-	buff = malloc(buff_size);
-
-	i = read(fd, buff, buff_size);
-	while (i > 0 && check(buff))
-	{
-		str = ft_strjoin(str, buff);
-		buff = malloc(buff_size);
-		i = read(fd, buff, buff_size);
-	}
-	str = join(str, buff);
-	free(buff);
-	return (str);
+	return (next(&str, i));
 }
 
 int main()
@@ -100,7 +100,12 @@ int main()
 
 	fd = open("test.text", O_RDONLY);
 	str = get_next_line(fd);
-	printf("%s", str);
-	printf("%s", get_next_line(fd));
+
+	while (str != NULL)
+	{
+		printf("%s", str);
+		str = get_next_line(fd);
+	}
+
 	return (0);
 }
