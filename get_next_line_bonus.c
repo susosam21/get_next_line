@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 12:29:41 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/13 14:56:51 by hmohamed         ###   ########.fr       */
+/*   Updated: 2022/11/13 14:58:21 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
+#include <fcntl.h>
 #include <stdio.h>
 
 static int	check(char *buff)
@@ -68,7 +69,7 @@ static char	*next(char **str, int i)
 char	*get_next_line(int fd)
 {
 	char		*temp;
-	static char	*str;
+	static char	*str[1024];
 	int			i;
 	char		buff[BUFFER_SIZE + 1];
 
@@ -78,32 +79,38 @@ char	*get_next_line(int fd)
 	while (i > 0)
 	{
 		buff[i] = '\0';
-		if (str == NULL)
-			str = ft_strdup(buff);
+		if (str[fd] == NULL)
+			str[fd] = ft_strdup(buff);
 		else
 		{
-			temp = ft_strjoin(str, buff);
-			free(str);
-			str = temp;
+			temp = ft_strjoin(str[fd], buff);
+			free(str[fd]);
+			str[fd] = temp;
 		}
-		if (check(str))
+		if (check(str[fd]))
 			break ;
 		i = read(fd, buff, BUFFER_SIZE);
 	}
-	return (next(&str, i));
+	return (next(&str[fd], i));
 }
 
 // int main()
 // {
 // 	char	*str;
+// 	char	*ali;
 // 	int		fd;
+// 	int		fdd;
 
 // 	fd = open("test.text", O_RDONLY);
+// 	fdd = open("test2.text", O_RDONLY);
 // 	str = get_next_line(fd);
-// 	while (str != NULL)
+// 	ali = get_next_line(fdd);
+// 	//printf("%s", str);
+// 	//printf("%s", ali);
+// 	while (ali != NULL)
 // 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
+// 		printf("%s", ali);
+// 		ali = get_next_line(fdd);
 // 	}
 // 	return (0);
 // }
