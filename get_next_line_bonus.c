@@ -6,7 +6,7 @@
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 12:29:41 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/13 14:58:21 by hmohamed         ###   ########.fr       */
+/*   Updated: 2022/11/14 22:22:35 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-static int	check(char *buff)
+static int	check(char *buff, char *buffer)
 {
 	int	i;
 
 	i = 0;
+	free(buffer);
 	while (buff[i] != '\0')
 	{
 		if (buff[i] == '\n')
@@ -71,10 +72,11 @@ char	*get_next_line(int fd)
 	char		*temp;
 	static char	*str[1024];
 	int			i;
-	char		buff[BUFFER_SIZE + 1];
+	char		*buff;
 
-	if (fd < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
 		return (NULL);
+	buff = malloc(BUFFER_SIZE + 1);
 	i = read(fd, buff, BUFFER_SIZE);
 	while (i > 0)
 	{
@@ -87,7 +89,7 @@ char	*get_next_line(int fd)
 			free(str[fd]);
 			str[fd] = temp;
 		}
-		if (check(str[fd]))
+		if (check(str[fd], &buff))
 			break ;
 		i = read(fd, buff, BUFFER_SIZE);
 	}

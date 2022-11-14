@@ -6,7 +6,7 @@
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 12:29:41 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/13 14:56:51 by hmohamed         ###   ########.fr       */
+/*   Updated: 2022/11/14 22:39:44 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,7 @@ static char	*next(char **str, int i)
 
 	if (i <= 0 && *str == NULL)
 		return (NULL);
-	else
-		j = 0;
+	j = 0;
 	while ((*str)[j] != '\n' && (*str)[j] != '\0')
 		j++;
 	if ((*str)[j] == '\n')
@@ -70,12 +69,13 @@ char	*get_next_line(int fd)
 	char		*temp;
 	static char	*str;
 	int			i;
-	char		buff[BUFFER_SIZE + 1];
+	char		*buff;
 
-	if (fd < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
 		return (NULL);
+	buff = malloc((size_t)BUFFER_SIZE + 1);
 	i = read(fd, buff, BUFFER_SIZE);
-	while (i > 0)
+	while (buff != NULL && i > 0)
 	{
 		buff[i] = '\0';
 		if (str == NULL)
@@ -90,20 +90,22 @@ char	*get_next_line(int fd)
 			break ;
 		i = read(fd, buff, BUFFER_SIZE);
 	}
-	return (next(&str, i));
+	return (free(buff), next(&str, i));
 }
 
-// int main()
-// {
-// 	char	*str;
-// 	int		fd;
+int main()
+{
+	char	*str;
+	int		fd;
 
-// 	fd = open("test.text", O_RDONLY);
-// 	str = get_next_line(fd);
-// 	while (str != NULL)
-// 	{
-// 		printf("%s", str);
-// 		str = get_next_line(fd);
-// 	}
-// 	return (0);
-// }
+	fd = open("test.text", O_RDONLY);
+	str = get_next_line(0);
+	while (str != NULL)
+	{
+		printf("%s", str);
+		free(str);
+		str = get_next_line(fd);
+	}
+	close(fd);
+	return (0);
+}
