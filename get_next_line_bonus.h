@@ -6,7 +6,7 @@
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/13 14:14:16 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/13 14:33:40 by hmohamed         ###   ########.fr       */
+/*   Updated: 2022/11/16 12:00:48 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdarg.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdio.h>
 
 char	*ft_strjoin(char *s1, char *buff);
 size_t	ft_strlen(const char *str);

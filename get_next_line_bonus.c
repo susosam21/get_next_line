@@ -6,20 +6,17 @@
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 12:29:41 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/14 22:22:35 by hmohamed         ###   ########.fr       */
+/*   Updated: 2023/05/30 20:10:53 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-#include <fcntl.h>
-#include <stdio.h>
 
-static int	check(char *buff, char *buffer)
+static int	check(char *buff)
 {
 	int	i;
 
 	i = 0;
-	free(buffer);
 	while (buff[i] != '\0')
 	{
 		if (buff[i] == '\n')
@@ -76,9 +73,9 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2147483647)
 		return (NULL);
-	buff = malloc(BUFFER_SIZE + 1);
+	buff = malloc((size_t)BUFFER_SIZE + 1);
 	i = read(fd, buff, BUFFER_SIZE);
-	while (i > 0)
+	while (buff != NULL && i > 0)
 	{
 		buff[i] = '\0';
 		if (str[fd] == NULL)
@@ -89,30 +86,31 @@ char	*get_next_line(int fd)
 			free(str[fd]);
 			str[fd] = temp;
 		}
-		if (check(str[fd], &buff))
+		if (check(str[fd]))
 			break ;
 		i = read(fd, buff, BUFFER_SIZE);
 	}
-	return (next(&str[fd], i));
+	return (free(buff), next(&str[fd], i));
 }
 
-// int main()
-// {
-// 	char	*str;
-// 	char	*ali;
-// 	int		fd;
-// 	int		fdd;
+int main()
+{
+	char	*str;
+	char	*ali;
+	int		fd;
+	int		fdd;
 
-// 	fd = open("test.text", O_RDONLY);
-// 	fdd = open("test2.text", O_RDONLY);
-// 	str = get_next_line(fd);
-// 	ali = get_next_line(fdd);
-// 	//printf("%s", str);
-// 	//printf("%s", ali);
-// 	while (ali != NULL)
-// 	{
-// 		printf("%s", ali);
-// 		ali = get_next_line(fdd);
-// 	}
-// 	return (0);
-// }
+	fd = open("test.text", O_RDONLY);
+	fdd = open("test2.text", O_RDONLY);
+	str = get_next_line(fd);
+	ali = get_next_line(fdd);
+	//printf("%s", str);
+	//printf("%s", ali);
+	while (ali != NULL)
+	{
+		printf("%s", ali);
+		ali = get_next_line(fdd);
+	}
+	
+	return (0);
+}

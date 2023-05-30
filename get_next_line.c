@@ -6,12 +6,11 @@
 /*   By: hmohamed <hmohamed@student.42abudhabi.ae>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 12:29:41 by hmohamed          #+#    #+#             */
-/*   Updated: 2022/11/14 22:39:44 by hmohamed         ###   ########.fr       */
+/*   Updated: 2023/04/09 20:05:36 by hmohamed         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 static int	check(char *buff)
 {
@@ -99,13 +98,15 @@ int main()
 	int		fd;
 
 	fd = open("test.text", O_RDONLY);
-	str = get_next_line(0);
-	while (str != NULL)
-	{
-		printf("%s", str);
-		free(str);
-		str = get_next_line(fd);
-	}
+	str = get_next_line(fd);
+	printf("%s", str);
+	free(str);
+	// while (str != NULL)
+	// {
+	// 	printf("%s", str);
+	// 	free(str);
+	// 	str = get_next_line(fd);
+	// }
 	close(fd);
 	return (0);
 }
