@@ -86,7 +86,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		temp = (char *)malloc(len + 1);
 	else
 	{
-		temp = (char *)malloc((ft_strlen(s) - (size_t)start));
+		temp = (char *)malloc((ft_strlen(s) - (size_t)start) + 1);
 		len = ft_strlen(s);
 	}
 	if (temp == NULL)
